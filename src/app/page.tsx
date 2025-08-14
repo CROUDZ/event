@@ -23,6 +23,10 @@ function generateParticles(count: number) {
 export default function Home() {
   const [copied, setCopied] = useState(false);
   const [serverIP, setServerIP] = useState("À venir...");
+  // QCM state
+  const [qcmStep, setQcmStep] = useState(0);
+  const [qcmDone, setQcmDone] = useState(false);
+  const [qcmError, setQcmError] = useState(false); // Ajout feedback erreur
   const [particles, setParticles] = useState<
     { left: number; top: number; x: number; y: number; duration: number }[]
   >([]);
@@ -31,6 +35,56 @@ export default function Home() {
   useEffect(() => {
     setParticles(generateParticles(50));
   }, []);
+
+  // QCM questions
+  const qcmQuestions = [
+    {
+      question: "Quel jour a été créé ta chaîne youtube :",
+      answers: [
+        "12 Mars 2024",
+        "53 Février 2048",
+        "23 Février 2024",
+      ],
+      correct: 2,
+    },
+    {
+      question: "Qui est ton meilleur ami :",
+      answers: [
+        "Goldmine2011",
+        "Zenith999",
+        "Este_Ytb",
+        "Jean Luc Mélenchon",
+      ],
+      correct: 2,
+    },
+    {
+      question: "Pour qui Zenith999 a t il voté lors des dernières élections présidentielles :",
+      answers: [
+        "Emmanuel Macron",
+        "Marine Lepen",
+        "Eric Z",
+      ],
+      correct: 2,
+    },
+  ];
+
+  // Handle QCM answer
+  const handleQcmAnswer = (idx: number) => {
+    if (idx === qcmQuestions[qcmStep].correct) {
+      setQcmError(false);
+      setTimeout(() => {
+        if (qcmStep < qcmQuestions.length - 1) {
+          setQcmStep(qcmStep + 1);
+        } else {
+          setQcmDone(true);
+          setServerIP("À venir..."); // Remplacer par l'IP quand tu l'auras
+        }
+      }, 350); // petite pause pour effet visuel
+    } else {
+      setQcmError(true);
+      setTimeout(() => setQcmError(false), 1200);
+    }
+  };
 
   const copyToClipboard = async () => {
     if (serverIP !== "À venir...") {
@@ -177,6 +231,108 @@ export default function Home() {
 
       {/* Section statistiques animées */}
       <StatsSection />
+
+      {/* Section QCM */}
+      <motion.section
+        className="bg-gradient-to-br from-purple-50 via-blue-100 to-indigo-100 py-16 px-2 md:px-4"
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
+        <div className="max-w-2xl mx-auto text-center">
+          <motion.h2
+            className="text-2xl md:text-3xl font-bold text-purple-800 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            L'Enquête Mystère : QCM
+          </motion.h2>
+          {!qcmDone ? (
+            <motion.div
+              key={qcmStep}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className={`rounded-2xl shadow-xl bg-white/80 p-8 border-2 ${
+                qcmError ? "border-red-400 animate-shake" : "border-transparent"
+              }`}
+              style={{ minHeight: 260 }}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <span className="text-purple-700 font-bold">
+                  Question {qcmStep + 1} / {qcmQuestions.length}
+                </span>
+                <div className="flex gap-1">
+                  {qcmQuestions.map((_, i) => (
+                    <div
+                      key={i}
+                      className={`w-4 h-2 rounded-full transition-all duration-300 ${
+                        i < qcmStep
+                          ? "bg-green-400"
+                          : i === qcmStep
+                          ? "bg-purple-400"
+                          : "bg-gray-300"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+              <p className="text-lg font-semibold mb-6 text-purple-900">{qcmQuestions[qcmStep].question}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                {qcmQuestions[qcmStep].answers.map((ans, idx) => (
+                  <motion.button
+                    key={idx}
+                    whileHover={{
+                      scale: 1.07,
+                      backgroundColor: "#e9d5ff",
+                      boxShadow: "0 0 0 2px #a78bfa",
+                    }}
+                    whileTap={{ scale: 0.97 }}
+                    className={`transition-all duration-200 bg-purple-100 text-purple-900 font-bold py-3 px-6 rounded-xl shadow-md border-2 ${
+                      qcmError
+                        ? "border-red-300"
+                        : "border-transparent"
+                    }`}
+                    onClick={() => handleQcmAnswer(idx)}
+                    disabled={qcmError}
+                  >
+                    {ans}
+                  </motion.button>
+                ))}
+              </div>
+              {qcmError && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-6 text-red-500 font-semibold"
+                >
+                  Mauvaise réponse ! Réessaie...
+                </motion.div>
+              )}
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="flex flex-col items-center rounded-2xl shadow-xl bg-white/80 p-8 border-2 border-green-300"
+            >
+              <p className="text-xl font-bold text-green-700 mb-4">
+                Voilà tu as réussi le QCM ! 🎉
+              </p>
+              <p className="text-base text-gray-700 mb-2">
+                Tu peux maintenant accéder au serveur Minecraft grâce à cette IP : <span className="font-mono font-bold">{serverIP}</span>
+              </p>
+              <p className="text-base text-gray-700 mb-2">
+                Et grâce au modpack <span className="font-bold">Demande le à Goldmine2011</span>
+              </p>
+            </motion.div>
+          )}
+        </div>
+      </motion.section>
 
       {/* Section serveur Minecraft */}
       <motion.section
