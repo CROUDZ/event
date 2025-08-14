@@ -36,6 +36,7 @@ export default function Home() {
     if (serverIP !== "À venir...") {
       await navigator.clipboard.writeText(serverIP);
       setCopied(true);
+      setServerIP("IP copiée !");
       setTimeout(() => setCopied(false), 2000);
     }
   };
