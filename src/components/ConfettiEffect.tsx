@@ -16,10 +16,19 @@ export function ConfettiEffect({ duration = 5000 }: { duration?: number }) {
   const [confetti, setConfetti] = useState<ConfettiPiece[]>([]);
   const [isActive, setIsActive] = useState(true);
 
-  const colors = useMemo(() => [
-    "#FFD700", "#FF6B6B", "#4ECDC4", "#45B7D1", 
-    "#96CEB4", "#FECA57", "#FF9FF3", "#54A0FF"
-  ], []);
+  const colors = useMemo(
+    () => [
+      "#FFD700",
+      "#FF6B6B",
+      "#4ECDC4",
+      "#45B7D1",
+      "#96CEB4",
+      "#FECA57",
+      "#FF9FF3",
+      "#54A0FF",
+    ],
+    [],
+  );
 
   useEffect(() => {
     // Créer les confettis
@@ -63,7 +72,7 @@ export function ConfettiEffect({ duration = 5000 }: { duration?: number }) {
             opacity: 1,
           }}
           animate={{
-            y: typeof window !== 'undefined' ? window.innerHeight + 100 : 1000,
+            y: typeof window !== "undefined" ? window.innerHeight + 100 : 1000,
             rotate: piece.rotation + 360,
             opacity: 0,
           }}

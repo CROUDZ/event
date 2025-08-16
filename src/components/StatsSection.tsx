@@ -12,7 +12,13 @@ interface CounterProps {
   suffix?: string;
 }
 
-function AnimatedCounter({ from, to, duration = 2, prefix = "", suffix = "" }: CounterProps) {
+function AnimatedCounter({
+  from,
+  to,
+  duration = 2,
+  prefix = "",
+  suffix = "",
+}: CounterProps) {
   const [count, setCount] = useState(from);
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true });
@@ -21,7 +27,7 @@ function AnimatedCounter({ from, to, duration = 2, prefix = "", suffix = "" }: C
     if (inView) {
       const controls = { number: from };
       const increment = (to - from) / (duration * 60); // 60 FPS approximation
-      
+
       const timer = setInterval(() => {
         controls.number += increment;
         if (controls.number >= to) {
@@ -37,7 +43,9 @@ function AnimatedCounter({ from, to, duration = 2, prefix = "", suffix = "" }: C
 
   return (
     <span ref={ref}>
-      {prefix}{count.toLocaleString()}{suffix}
+      {prefix}
+      {count.toLocaleString()}
+      {suffix}
     </span>
   );
 }
@@ -51,7 +59,14 @@ interface StatCardProps {
   delay?: number;
 }
 
-function StatCard({ icon, value, label, prefix = "", suffix = "", delay = 0 }: StatCardProps) {
+function StatCard({
+  icon,
+  value,
+  label,
+  prefix = "",
+  suffix = "",
+  delay = 0,
+}: StatCardProps) {
   return (
     <motion.div
       className="bg-white/10 backdrop-blur-lg rounded-xl p-6 text-center"
@@ -68,8 +83,8 @@ function StatCard({ icon, value, label, prefix = "", suffix = "", delay = 0 }: S
       >
         {icon}
       </motion.div>
-      
-      <motion.div 
+
+      <motion.div
         className="text-3xl md:text-4xl font-bold text-white mb-2"
         initial={{ scale: 0 }}
         whileInView={{ scale: 1 }}
@@ -78,7 +93,7 @@ function StatCard({ icon, value, label, prefix = "", suffix = "", delay = 0 }: S
       >
         <AnimatedCounter from={0} to={value} prefix={prefix} suffix={suffix} />
       </motion.div>
-      
+
       <p className="text-blue-200 font-medium">{label}</p>
     </motion.div>
   );
@@ -86,7 +101,7 @@ function StatCard({ icon, value, label, prefix = "", suffix = "", delay = 0 }: S
 
 export function StatsSection() {
   return (
-    <motion.section 
+    <motion.section
       className="py-20 px-4 bg-gradient-to-r from-indigo-800 to-purple-800"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
@@ -94,7 +109,7 @@ export function StatsSection() {
       viewport={{ once: true }}
     >
       <div className="max-w-6xl mx-auto">
-        <motion.h2 
+        <motion.h2
           className="text-4xl md:text-5xl font-bold text-white text-center mb-16"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -103,7 +118,7 @@ export function StatsSection() {
         >
           Un moment historique ! 🎊
         </motion.h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <StatCard
             icon={<Users className="w-8 h-8 text-white" />}
@@ -111,14 +126,14 @@ export function StatsSection() {
             label="Abonnés atteints"
             delay={0.1}
           />
-          
+
           <StatCard
             icon={<Gift className="w-8 h-8 text-white" />}
             value={1}
             label="Surprise spéciale"
             delay={0.3}
           />
-          
+
           <StatCard
             icon={<Server className="w-8 h-8 text-white" />}
             value={1}
